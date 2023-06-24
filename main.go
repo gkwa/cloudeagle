@@ -8,7 +8,7 @@ import (
 )
 
 const tfTemplate = `provider "aws" {
-  region = "us-west-2"  # Replace with your desired AWS region
+  region = "{{.AwsRegion}}"
 }
 
 resource "aws_key_pair" "example" {
@@ -24,13 +24,17 @@ output "key_pair_name" {
 type TemplateData struct {
 	PublicKeyPath string
 	KeyName       string
+	AwsRegion     string
 }
 
 func main() {
 	var publicKeyPath string
 	var keyName string
+	var awsRegion string
+
 	flag.StringVar(&publicKeyPath, "publicKeyPath", "", "Path to the public key file")
 	flag.StringVar(&keyName, "keyName", "", "Key name")
+	flag.StringVar(&awsRegion, "awsRegion", "", "AWS region")
 	flag.Parse()
 
 	if publicKeyPath == "" {
@@ -51,7 +55,7 @@ func main() {
 	defer outputFile.Close()
 
 	// Fill in the template with the provided data
-	data := TemplateData{PublicKeyPath: publicKeyPath, KeyName: keyName}
+	data := TemplateData{PublicKeyPath: publicKeyPath, KeyName: keyName, AwsRegion: awsRegion}
 	err = tmpl.Execute(outputFile, data)
 	if err != nil {
 		fmt.Printf("Error executing template: %v\n", err)
