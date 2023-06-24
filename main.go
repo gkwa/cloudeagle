@@ -55,7 +55,11 @@ func main() {
 	defer outputFile.Close()
 
 	// Fill in the template with the provided data
-	data := TemplateData{PublicKeyPath: publicKeyPath, KeyName: keyName, AwsRegion: awsRegion}
+	data := TemplateData{
+		PublicKeyPath: publicKeyPath, 
+		KeyName: keyName, 
+		AwsRegion: awsRegion,
+	}
 	err = tmpl.Execute(outputFile, data)
 	if err != nil {
 		fmt.Printf("Error executing template: %v\n", err)
